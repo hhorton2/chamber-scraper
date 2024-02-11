@@ -11,8 +11,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "async-mutex": "^0.4.1",
     "puppeteer": "^22.0.0",
     "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2"
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "sequelize": "^6.37.0",
+    "sqlite3": "^5.1.7",
+    "string-similarity": "^4.0.4"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.2"
   }
 }

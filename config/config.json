@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "root",
+    "password": null,
+    "database": "chambers",
+    "storage": "./chamberDB.sqlite",
+    "dialect": "sqlite"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "chambers",
+    "storage": "./chamberDB.sqlite",
+    "dialect": "sqlite"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "chambers",
+    "storage": "./chamberDB.sqlite",
+    "dialect": "sqlite"
+  }
+}
