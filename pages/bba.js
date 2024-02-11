@@ -12,11 +12,15 @@ export class BbaPage {
         // Open a new page and save the page to our class variable
         this.page = await this.browser.newPage();
 
+
         // Set screen size
         await this.page.setViewport({width: 1920, height: 1080});
 
         // Navigate the page to a URL
-        await this.page.goto('https://www.birminghambusinessalliance.com/investor-directory#!directory'); // Replace with the actual URL
+        await this.page.goto('https://www.birminghambusinessalliance.com/investor-directory#!directory', {
+            timeout: 60000,
+            waitUntil: 'networkidle2'
+        });
         const that = this;
 
         // Function to scroll to the bottom of the page

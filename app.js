@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-extra';
 import {DothanPage} from "./pages/cca/dothan.js";
 import {EnterprisePage} from "./pages/cca/enterprise.js";
 import {EasternShorePage} from "./pages/growth-zone/eastern-shore.js";
@@ -17,50 +17,53 @@ import {MobilePage} from "./pages/chamber-master/mobile.js";
 import {MontgomeryPage} from "./pages/chamber-master/montgomery.js";
 import {TalladegaPage} from "./pages/chamber-master/talladega.js";
 import {BbaPage} from "./pages/bba.js";
+import StealthPlugin from "puppeteer-extra-plugin-stealth"
 
 (async () => {
     // Launch the browser and open a new blank page
-    const browser = await puppeteer.launch();
+    puppeteer.use(StealthPlugin())
+    const browser = await puppeteer.launch({args: ['--no-sandbox'], headless: true});
     const pages = [
         //Growth Zone
-        new EasternShorePage(browser),
-        new HomewoodPage(browser),
-        new OpelikaPage(browser),
-        new PellCityPage(browser),
-        new PrattvillePage(browser),
-        new SaralandPage(browser),
-        new ShelbyCountyPage(browser),
-        new SouthBaldwinPage(browser),
-        new SouthwestMobilePage(browser),
-        new SylacaugaPage(browser),
-        new WestAlabamaPage(browser),
-        new WetumpkaPage(browser),
+        new EasternShorePage(await browser.createBrowserContext()),
+        new HomewoodPage(await browser.createBrowserContext()),
+        new OpelikaPage(await browser.createBrowserContext()),
+        new PellCityPage(await browser.createBrowserContext()),
+        new PrattvillePage(await browser.createBrowserContext()),
+        new SaralandPage(await browser.createBrowserContext()),
+        new ShelbyCountyPage(await browser.createBrowserContext()),
+        new SouthBaldwinPage(await browser.createBrowserContext()),
+        new SouthwestMobilePage(await browser.createBrowserContext()),
+        new SylacaugaPage(await browser.createBrowserContext()),
+        new WestAlabamaPage(await browser.createBrowserContext()),
+        new WetumpkaPage(await browser.createBrowserContext()),
 
         //Chamber Master
-        new MobilePage(browser),
-        new MontgomeryPage(browser),
-        new TalladegaPage(browser),
+        new MobilePage(await browser.createBrowserContext()),
+        new MontgomeryPage(await browser.createBrowserContext()),
+        new TalladegaPage(await browser.createBrowserContext()),
 
         //CCA
-        new DothanPage(browser),
-        new EnterprisePage(browser),
+        new DothanPage(await browser.createBrowserContext()),
+        new EnterprisePage(await browser.createBrowserContext()),
 
         //Unique
-        new BbaPage(browser),
+        new BbaPage(await browser.createBrowserContext()),
     ]
-
-    const batchProcess = async (batch) => {
-        const startTime = Date.now();
-        const promises = batch.map(p => p.getBusinessList());
-        const results = await Promise.all(promises);
-        const endTime = Date.now();
-        console.log(results.flatMap(r => r).join("\n"));
-        console.log(`Batch Time: ${(endTime - startTime) / 1000} seconds`);
-    };
-
-    for (let i = 0; i < pages.length; i += 5) {
-        await batchProcess(pages.slice(i, i + 5));
+    let allResults = [];
+    for (let pageInstance of pages) {
+        try {
+            const names = await pageInstance.getBusinessList();
+            allResults = allResults.concat(names);
+        } catch (error) {
+            console.error(`Failed to load page ${pageInstance.constructor.name}:`, error.message);
+        }
     }
+    const uniqueResults = [...new Set(allResults)].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    console.log(uniqueResults.join("\n"));
+    console.log(`Total Unique Results: ${uniqueResults.length}`);
+
+    await browser.close();
 
 
     await browser.close();
